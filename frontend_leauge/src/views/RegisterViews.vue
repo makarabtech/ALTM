@@ -69,7 +69,6 @@ async function register() {
             <label for="register-confirmation">Confirm password</label>
             <input id="register-confirmation" v-model="confirmation" name="confirmation" type="password" autocomplete="new-password" required />
 
-<label for="register-role">Account type</label>
 
             <label for="register-role">Account type</label>
 
