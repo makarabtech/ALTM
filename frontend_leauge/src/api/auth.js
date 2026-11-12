@@ -1,4 +1,3 @@
-
 import { authenticateDemoAccount, registerDemoAccount } from "../demo/accounts.js";
 
 const apiBase = (import.meta.env.VITE_API_BASE_URL ?? "").trim().replace(/\/+$/, "");
@@ -37,44 +36,25 @@ async function requestJson(path, { method = "GET", body, token, allowNoContent =
   return data;
 }
 
-
 export async function registerAccount({ name, email, password, role }) {
   if (!authApiConfigured) {
     await registerDemoAccount({ name, email, password, role: normalizeRole(role) });
     return;
   }
 
-  const selectedRole = normalizeRole(role);
-
-  // Organizer accounts should not be created through public registration.
-  if (selectedRole === "organizer") {
-    throw new Error("Organizer accounts must be created by an administrator.");
-  }
-
   await requestJson(registerPath, {
     method: "POST",
-    body: {
-      name,
-      email,
-      password,
-      role: selectedRole.toUpperCase(),
-    },
+    body: { name, email, password },
     allowNoContent: true,
   });
 }
 
-<<<<<<< HEAD
-
-function normalizeRole(role) {
-  const key = typeof role === "string" ? role.trim().toLowerCase().replace(/[\s_-]/g, "") : "";
-=======
 function normalizeRole(role, { allowAdmin = false } = {}) {
   const key = typeof role === "string"
     ? role.trim().toLowerCase().replace(/[\s_-]/g, "")
     : "";
 
   if (allowAdmin && key === "admin") return "admin";
->>>>>>> 81ce382 (update my amdin)
   if (key === "organizer") return "organizer";
   if (key === "manager" || key === "teammanager") return "manager";
   return "viewer";
@@ -102,7 +82,7 @@ export async function authenticate({ email, password }) {
   }
 
   const profile = await requestJson(profilePath, { token });
-  const account = profile.user ?? profile.data?.user ?? profile.data?.user ?? profile.data ?? profile;
+  const account = profile.user ?? profile.data?.user ?? profile.data ?? profile;
   const id = account?.id ?? account?.userId ?? account?.sub ?? account?.email;
 
   if ((typeof id !== "string" && typeof id !== "number") || !String(id).trim()) {
