@@ -36,18 +36,32 @@ async function requestJson(path, { method = "GET", body, token, allowNoContent =
   return data;
 }
 
+
 export async function registerAccount({ name, email, password, role }) {
   if (!authApiConfigured) {
     await registerDemoAccount({ name, email, password, role: normalizeRole(role) });
     return;
   }
 
+  const selectedRole = normalizeRole(role);
+
+  // Organizer accounts should not be created through public registration.
+  if (selectedRole === "organizer") {
+    throw new Error("Organizer accounts must be created by an administrator.");
+  }
+
   await requestJson(registerPath, {
     method: "POST",
-    body: { name, email, password },
+    body: {
+      name,
+      email,
+      password,
+      role: selectedRole.toUpperCase(),
+    },
     allowNoContent: true,
   });
 }
+
 
 function normalizeRole(role) {
   const key = typeof role === "string" ? role.trim().toLowerCase().replace(/[\s_-]/g, "") : "";
