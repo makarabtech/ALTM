@@ -1,3 +1,4 @@
+
 import { authenticateDemoAccount, registerDemoAccount } from "../demo/accounts.js";
 
 const apiBase = (import.meta.env.VITE_API_BASE_URL ?? "").trim().replace(/\/+$/, "");
@@ -10,11 +11,11 @@ export const authApiConfigured = Boolean(apiBase);
 async function requestJson(path, { method = "GET", body, token, allowNoContent = false } = {}) {
   const headers = { Accept: "application/json" };
   if (body) headers["Content-Type"] = "application/json";
-  if (token) headers.Authorization = Bearer ${token};
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   let response;
   try {
-    response = await fetch(${apiBase}/${path.replace(/^\/+/, "")}, {
+    response = await fetch(`${apiBase}/${path.replace(/^\/+/, "")}`, {
       method,
       headers,
       credentials: "omit",
@@ -27,7 +28,7 @@ async function requestJson(path, { method = "GET", body, token, allowNoContent =
   if (allowNoContent && response.status === 204) return null;
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = typeof data?.message === "string" ? data.message : The request failed (${response.status}).;
+    const message = typeof data?.message === "string" ? data.message : `The request failed (${response.status}).`;
     throw new Error(message);
   }
   if (data === null || typeof data !== "object") {
@@ -86,7 +87,7 @@ export async function authenticate({ email, password }) {
   }
 
   const profile = await requestJson(profilePath, { token });
-  const account = profile.user ?? profile.data?.user ?? profile.data ?? profile;
+  const account = profile.user ?? profile.data?.user ?? profile.data?.user ?? profile.data ?? profile;
   const id = account?.id ?? account?.userId ?? account?.sub ?? account?.email;
   if ((typeof id !== "string" && typeof id !== "number") || !String(id).trim()) {
     throw new Error("The profile response needs a user ID or email.");
