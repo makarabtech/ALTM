@@ -63,12 +63,20 @@ export async function registerAccount({ name, email, password, role }) {
 }
 
 
+
 function normalizeRole(role) {
-  const key = typeof role === "string" ? role.trim().toLowerCase().replace(/[\s_-]/g, "") : "";
+  const key = typeof role === "string"
+    ? role.trim().toLowerCase().replace(/[\s_-]/g, "")
+    : "";
+
+  if (key === "admin" || key === "administrator") return "admin";
   if (key === "organizer") return "organizer";
   if (key === "manager" || key === "teammanager") return "manager";
+  if (key === "viewer" || key === "user") return "viewer";
+
   return "viewer";
 }
+
 
 export async function authenticate({ email, password }) {
   if (!authApiConfigured) {
