@@ -69,12 +69,13 @@ async function register() {
             <label for="register-confirmation">Confirm password</label>
             <input id="register-confirmation" v-model="confirmation" name="confirmation" type="password" autocomplete="new-password" required />
 
-            <template v-if="!authApiConfigured">
-              <label for="register-role">Demo role</label>
-              <select id="register-role" v-model="role" name="role">
-                <option v-for="(label, value) in roleLabels" :key="value" :value="value">{{ label }}</option>
-              </select>
-            </template>
+            
+<label for="register-role">Account type</label>
+<select id="register-role" v-model="role" name="role" required>
+  <option value="viewer">Viewer</option>
+  <option value="manager">Manager</option>
+</select>
+
           </fieldset>
 
           <p v-if="error" class="login-error" role="alert">{{ error }}</p>
