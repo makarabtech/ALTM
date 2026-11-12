@@ -69,13 +69,20 @@ async function register() {
             <label for="register-confirmation">Confirm password</label>
             <input id="register-confirmation" v-model="confirmation" name="confirmation" type="password" autocomplete="new-password" required />
 
+<<<<<<< HEAD
             
 <label for="register-role">Account type</label>
+=======
+            <label for="register-role">Account type</label>
+>>>>>>> b5a6b53 (to chagne rolde)
 <select id="register-role" v-model="role" name="role" required>
   <option value="viewer">Viewer</option>
   <option value="manager">Manager</option>
 </select>
+<<<<<<< HEAD
 
+=======
+>>>>>>> b5a6b53 (to chagne rolde)
           </fieldset>
 
           <p v-if="error" class="login-error" role="alert">{{ error }}</p>
