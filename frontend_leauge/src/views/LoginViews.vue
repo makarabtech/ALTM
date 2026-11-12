@@ -4,9 +4,12 @@ import { RouterLink, useRouter } from "vue-router";
 import AuthLayout from "../components/AuthLayout.vue";
 import { authApiConfigured } from "../api/auth.js";
 import { useAuthStore } from "../stores/auth.js";
+import { useWelcomeToastStore } from "../stores/welcome.js";
 
 const router = useRouter();
 const auth = useAuthStore();
+const welcomeToast = useWelcomeToastStore();
+
 const email = ref("");
 const password = ref("");
 const waiting = ref(false);
@@ -14,14 +17,19 @@ const error = ref("");
 
 async function signIn() {
   if (waiting.value) return;
+
   waiting.value = true;
   error.value = "";
+
   try {
     await auth.signIn({ email: email.value, password: password.value });
     password.value = "";
+    welcomeToast.showSignedIn(auth.user?.name);
     await router.replace("/");
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : "Could not sign in. Try again.";
+    error.value = cause instanceof Error
+      ? cause.message
+      : "Could not sign in. Try again.";
   } finally {
     waiting.value = false;
   }

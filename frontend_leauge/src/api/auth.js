@@ -63,9 +63,18 @@ export async function registerAccount({ name, email, password, role }) {
   });
 }
 
+<<<<<<< HEAD
 
 function normalizeRole(role) {
   const key = typeof role === "string" ? role.trim().toLowerCase().replace(/[\s_-]/g, "") : "";
+=======
+function normalizeRole(role, { allowAdmin = false } = {}) {
+  const key = typeof role === "string"
+    ? role.trim().toLowerCase().replace(/[\s_-]/g, "")
+    : "";
+
+  if (allowAdmin && key === "admin") return "admin";
+>>>>>>> 81ce382 (update my amdin)
   if (key === "organizer") return "organizer";
   if (key === "manager" || key === "teammanager") return "manager";
   return "viewer";
@@ -74,14 +83,20 @@ function normalizeRole(role) {
 export async function authenticate({ email, password }) {
   if (!authApiConfigured) {
     const user = await authenticateDemoAccount({ email, password });
-    return { token: null, user: { ...user, role: normalizeRole(user.role) } };
+    return {
+      token: null,
+      user: { ...user, role: normalizeRole(user.role) },
+    };
   }
 
   const login = await requestJson(loginPath, {
     method: "POST",
     body: { email, password },
   });
-  const token = login.token ?? login.accessToken ?? login.data?.token ?? login.data?.accessToken;
+
+  const token =
+    login.token ?? login.accessToken ?? login.data?.token ?? login.data?.accessToken;
+
   if (typeof token !== "string" || !token.trim()) {
     throw new Error("The login response needs a token or accessToken field.");
   }
@@ -89,6 +104,7 @@ export async function authenticate({ email, password }) {
   const profile = await requestJson(profilePath, { token });
   const account = profile.user ?? profile.data?.user ?? profile.data?.user ?? profile.data ?? profile;
   const id = account?.id ?? account?.userId ?? account?.sub ?? account?.email;
+
   if ((typeof id !== "string" && typeof id !== "number") || !String(id).trim()) {
     throw new Error("The profile response needs a user ID or email.");
   }
@@ -99,7 +115,7 @@ export async function authenticate({ email, password }) {
       id: String(id),
       name: typeof account.name === "string" ? account.name.trim() : "",
       email: typeof account.email === "string" ? account.email : "",
-      role: normalizeRole(account.role),
+      role: normalizeRole(account.role, { allowAdmin: true }),
     },
   };
 }

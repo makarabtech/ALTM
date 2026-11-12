@@ -7,6 +7,7 @@ import ActionDialog from "./components/ActionDialog.vue";
 import AppIcon from "./components/AppIcon.vue";
 import PageLoader from "./components/PageLoader.vue";
 import ThemeToggle from "./components/ThemeToggle.vue";
+import WelcomeToast from "./components/WelcomeToast.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -53,6 +54,7 @@ watch(inWorkspace, (active) => {
         <img src="/mark.svg" width="40" height="40" alt="" />
         <div><strong>ATLM</strong><small>Competition manager</small></div>
       </RouterLink>
+
       <nav v-if="tournament" aria-label="Competition sections">
         <span class="eyebrow">Manage</span>
         <RouterLink
@@ -65,6 +67,7 @@ watch(inWorkspace, (active) => {
           <AppIcon :name="tab.icon" />{{ tab.label }}
         </RouterLink>
       </nav>
+
       <nav aria-label="Competitions">
         <span class="eyebrow">Competitions</span>
         <RouterLink
@@ -80,6 +83,7 @@ watch(inWorkspace, (active) => {
           <span class="truncated" :title="item.name">{{ item.name }}</span>
         </RouterLink>
       </nav>
+
       <div class="local-note">
         <span aria-hidden="true"></span>
         <div><strong>{{ auth.demo ? "Frontend demo" : "Signed-in workspace" }}</strong><small>Sample league data on this device</small></div>
@@ -98,9 +102,11 @@ watch(inWorkspace, (active) => {
               <option value="viewer">Viewer</option>
             </select>
           </label>
+
           <div v-else-if="auth.user" class="account-badge" :title="accountName">
             <strong>{{ accountName }}</strong><span>{{ roleLabels[auth.user.role] }}</span>
           </div>
+
           <ThemeToggle />
           <button v-if="store.isOrganizer && tournament" type="button" class="button primary" @click="open('tournament')">
             ＋ <span>New competition</span>
@@ -108,18 +114,22 @@ watch(inWorkspace, (active) => {
           <button type="button" class="button" @click="signOut">{{ auth.demo ? "Exit demo" : "Sign out" }}</button>
         </div>
       </header>
+
       <main id="main" tabindex="-1">
         <div v-if="store.error" class="panel empty" role="alert">
           <h1>Workspace unavailable</h1>
           <p class="muted">{{ store.error }}</p>
           <button type="button" class="button" @click="store.load">Retry</button>
         </div>
+
         <div v-else-if="store.loading || !store.workspace" class="panel empty" role="status">Loading competitions…</div>
+
         <div v-else-if="!tournament" class="panel empty">
           <h1>Competition unavailable</h1>
           <p class="muted">Choose a competition from the sidebar or return to the sample league.</p>
           <RouterLink to="/" class="button">Open sample league</RouterLink>
         </div>
+
         <template v-else>
           <p v-if="!store.workspace.storageAvailable" class="demo-storage muted" role="status">
             Browser storage is unavailable. Changes last for this session.
@@ -131,6 +141,7 @@ watch(inWorkspace, (active) => {
       </main>
     </div>
   </div>
+
   <ActionDialog
     v-if="inWorkspace && dialog && tournament"
     :tournament="tournament"
@@ -139,4 +150,6 @@ watch(inWorkspace, (active) => {
     @close="dialog = null"
     @navigate="showPage"
   />
+
+  <WelcomeToast />
 </template>

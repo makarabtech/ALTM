@@ -5,6 +5,7 @@ import { authenticate } from "../api/auth.js";
 const demoKey = "atlm-demo-session";
 
 export const roleLabels = {
+  admin: "Administrator",
   organizer: "Organizer",
   manager: "Team Manager",
   viewer: "Viewer",

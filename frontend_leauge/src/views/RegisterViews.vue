@@ -78,6 +78,7 @@ async function register() {
 <select id="register-role" v-model="role" name="role" required>
   <option value="viewer">Viewer</option>
   <option value="manager">Manager</option>
+  <option value="ornizer">Organizer</option>
 </select>
 <<<<<<< HEAD
 
